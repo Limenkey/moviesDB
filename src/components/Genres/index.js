@@ -1,6 +1,8 @@
+/* eslint-disable react/forbid-prop-types */
 /* eslint-disable array-callback-return */
 
 import React from "react"
+import PropTypes from "prop-types"
 import { Card } from "antd"
 import './genres.css'
 
@@ -22,6 +24,11 @@ const Genres = ({genres, genresList}) => {
 Genres.defaultProps = {
     genres: [],
     genresList: []
+}
+
+Genres.propTypes = {
+    genres: PropTypes.array,
+    genresList: PropTypes.array
 }
 
 export default Genres

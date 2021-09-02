@@ -1,8 +1,8 @@
 /* eslint-disable id-length */
-/* eslint-disable react/prop-types */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React from "react";
+import PropTypes from "prop-types"
 import './navigation.css'
 
 
@@ -22,6 +22,15 @@ const Navigation = ({onSwitch}) => {
             <span className="switch" onClick={(e) => toggleClass(e)}>Rated</span>
         </nav>
     )
+}
+
+
+Navigation.defaultProps = {
+    onSwitch: () => {}
+}
+
+Navigation.propTypes = {
+    onSwitch: PropTypes.func
 }
 
    

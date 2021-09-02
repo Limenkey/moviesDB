@@ -1,6 +1,7 @@
-/* eslint-disable react/prop-types */
+/* eslint-disable react/forbid-prop-types */
 
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Spin, Alert } from 'antd'
 import Movies from '../Movies'
 import './pagecontent.css'
@@ -39,9 +40,37 @@ const PageContent = ({movies, pages, loading, error, page, errMsg, onPageChange,
 }
 
 PageContent.defaultProps = {
-    movies: [],
-    ratings: []
+    movies: [], 
+    pages: 1, 
+    loading: false, 
+    error: false, 
+    page: 1, 
+    errMsg: '', 
+    onPageChange: () => {}, 
+    rateMovie: () => {}, 
+    ratings: [], 
+    switcher: '', 
+    ratedPages: 1, 
+    query: '', 
+    searched: false
 }
+
+PageContent.propTypes = {
+    movies: PropTypes.array, 
+    pages: PropTypes.number, 
+    loading: PropTypes.bool, 
+    error: PropTypes.bool, 
+    page: PropTypes.number, 
+    errMsg: PropTypes.string, 
+    onPageChange: PropTypes.func, 
+    rateMovie: PropTypes.func, 
+    ratings: PropTypes.array, 
+    switcher: PropTypes.string, 
+    ratedPages: PropTypes.number, 
+    query: PropTypes.string, 
+    searched: PropTypes.bool
+}
+
 
 export default PageContent    
 

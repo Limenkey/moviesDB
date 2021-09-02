@@ -1,7 +1,10 @@
+/* eslint-disable react/forbid-prop-types */
+/* eslint-disable react/require-default-props */
 /* eslint-disable arrow-body-style */
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/prop-types */
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import {Card, Rate} from 'antd'
 import Genres from '../Genres'
 import { DataConsumer } from '../DataContext'
@@ -98,6 +101,17 @@ export default class MyCard extends Component {
     </Card>)
    }
        
+}
+
+MyCard.propTypes = {
+    title: PropTypes.string,
+    date: PropTypes.string,
+    genres: PropTypes.array,
+    synopsis: PropTypes.string,
+    poster: PropTypes.string,
+    rateMovie: PropTypes.func,
+    ratings: PropTypes.array,
+    id: PropTypes.number
 }
 
      
