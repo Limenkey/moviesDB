@@ -38,7 +38,6 @@ export default class App extends Component {
         const {page, query} = this.state
         this.createNewSession()
         this.updateMovies(page, query)
-        this.getRatedMovies()
         this.getGenresList()
     }
 
