@@ -1,0 +1,22 @@
+.navigation {
+    display: block;
+    width: 10rem;
+    margin: auto;
+    margin-bottom: 1.25rem;
+}
+
+.navigation span {
+    padding: .3rem;
+    display: inline-block;
+    border-bottom: .125rem solid lightgray;
+    box-sizing: border-box;
+    color: lightgray;
+    cursor: pointer;
+}
+
+
+.navigation .switch--active {
+    color: #000;
+    border-bottom: .125rem solid cornflowerblue;
+    cursor: default;
+}
