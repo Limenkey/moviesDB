@@ -1,3 +1,6 @@
+/* eslint-disable react/jsx-no-duplicate-props */
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-unused-vars */
 
 /* eslint-disable id-length */
 /* eslint-disable react/jsx-fragments */
@@ -8,31 +11,34 @@ import _ from "lodash"
 import 'antd/dist/antd.css'
 import {Input} from 'antd'
 import PageContent from "../PageContent";
-import MoviesdbService from "../../services/MoviesdbService";
+import service from "../../services/MoviesdbService";
 import Navigation from "../Navigation";
 import { DataProvider } from "../DataContext";
 import './app.css'
 
+
+const debouncedSearch = _.debounce((str, cb) => cb(str), 1000)
+const expiresAt = 'expiresAt'
+const sessionID = 'sessionID'
+
 export default class App extends Component {
 
-    service = new MoviesdbService
 
     state = {
         ratedMovies: [],
-        sessionId: localStorage.getItem('id'),
-        expiration: localStorage.getItem('exp'),
+        sessionId: localStorage.getItem(expiresAt),
+        expiration: localStorage.getItem(sessionID),
         query: '',
         searched: false, 
         page: 1,
         pages: 0,
         movies: [],
         genres: [],
-        loading: true,
+        loading: false,
         error: false,
         errorMessage: null,
         switcher: 'Search'
     }
-
 
     componentDidMount() {
         const {page, query} = this.state
@@ -41,7 +47,11 @@ export default class App extends Component {
         this.getGenresList()
     }
 
-    
+    componentDidUpdate(prevProps, prevState) {
+        if(prevState.query !== this.state.query) {
+            debouncedSearch(this.state.query, this.onInput)
+        }
+    }
 
     onPageChange(num) {
         const {query, page} = this.state
@@ -69,9 +79,9 @@ export default class App extends Component {
 
 
 
-    onInput = (event) => {   
-        this.search(event.target.value)
-        this.updateMovies(1, this.state.query)
+    onInput = (str) => {   
+        this.search(str)
+        this.updateMovies(1, str) 
     }
 
     onLoadedRated = (data) => {
@@ -79,21 +89,24 @@ export default class App extends Component {
             loading: true,
             error: false,
             ratedMovies: data.results,
-            ratedPages: data.total_pages}, () => this.state)    
+            ratedPages: data.total_pages}, () => this.state)
     }
 
     onSwitch(str) {
         this.getRatedMovies()
-        this.setState({switcher: str}, () => this.state)    
+        this.setState({
+                        switcher: str,
+                        loading: true
+                    }, () => this.state)    
     }
 
     getRatedMovies() {
-        this.service.getRatedMovies()
-                                    .then(this.onLoadedRated)
-                                    .then((res) => {
-                                        this.setState({loading: false})
-                                        return res
-                                    })
+        service.getRatedMovies()
+                            .then(this.onLoadedRated)
+                            .then((res) => {
+                                this.setState({loading: false})
+                                return res
+                            })
     }
 
     search = (str) => {
@@ -110,23 +123,24 @@ export default class App extends Component {
     createNewSession = () => {
         const exp = new Date(localStorage.getItem('exp'))
         const now = new Date (Date.now())
-        this.service
-                    .createNewSession()
-                    .then(data => {
-                        if (now.getTime() > exp.getTime()) { 
-                            this.setState({
-                                sessionId: data.guest_session_id,
-                                expiration: data.expires_at
-                            }, () => this.state)
-                            localStorage.setItem('id', this.state.sessionId)
-                            localStorage.setItem('exp', this.state.expiration)
-                        }   
-                    })
+        
+        service
+            .createNewSession()
+            .then(data => {
+                if (now.getTime() > exp.getTime()) { 
+                    this.setState({
+                        sessionId: data.guest_session_id,
+                        expiration: data.expires_at
+                    }, () => this.state)
+                    localStorage.setItem(sessionID, this.state.sessionId)
+                    localStorage.setItem(expiresAt, this.state.expiration)
+                }   
+            })
     }
 
     updateMovies = (page, str) => {
         if (str) {
-            this.service
+            service
                         .searchMovies(page, str)
                         .then(this.onLoaded)
                         .catch(this.onError)           
@@ -134,17 +148,31 @@ export default class App extends Component {
     }
 
     getGenresList = () => {
-        this.service.getGenres().then(data => this.setState({genres: data}))
+        service.getGenres().then(data => this.setState({genres: data}))
     }
 
     rateMovie = (id, rating) => {
-        this.service.rateMovie(id, rating)
-                    .then(() => this.service.getRatedMovies())
+        if (rating > 0) { 
+            service.rateMovie(id, rating)
+                                    .then(() => service.getRatedMovies())
+        }
+        if (rating === 0) {
+            const updatedRatedMovies = this.state.ratedMovies.filter(el => el.id !== id)
+            this.setState((state, props)=> ({ratedMovies: updatedRatedMovies}))
+            service.deleteRatedMovie(id)                                
+        }   
     }
+
+    
 
    render() {
        const {query, movies, pages, loading, error, errorMessage, page, ratedMovies, switcher, ratedPages, searched} = this.state
-       const input = switcher !== 'Rated' ? <Input className="search-input" placeholder="Type to search..." onInput={_.debounce(this.onInput, 500)}/> : null
+       const rated = 'Rated'
+       const input = switcher !== rated && <Input className="search-input" 
+                                                    placeholder="Type to search..." 
+                                                    onChange={e => this.setState({query: e.target.value})}
+                                                    value={query}
+                                                />
     return (
             <DataProvider value={this.state.genres}>
                 <Navigation className="navigation" onSwitch={(str) => this.onSwitch(str)}/>
