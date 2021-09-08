@@ -101,12 +101,13 @@ export default class App extends Component {
     }
 
     getRatedMovies() {
-        service.getRatedMovies()
-                            .then(this.onLoadedRated)
-                            .then((res) => {
-                                this.setState({loading: false})
-                                return res
-                            })
+        service
+            .getRatedMovies()
+            .then(this.onLoadedRated)
+            .then((res) => {
+                this.setState({loading: false})
+                return res
+            })
     }
 
     search = (str) => {
@@ -141,20 +142,23 @@ export default class App extends Component {
     updateMovies = (page, str) => {
         if (str) {
             service
-                        .searchMovies(page, str)
-                        .then(this.onLoaded)
-                        .catch(this.onError)           
+                .searchMovies(page, str)
+                .then(this.onLoaded)
+                .catch(this.onError)           
                     }             
     }
 
     getGenresList = () => {
-        service.getGenres().then(data => this.setState({genres: data}))
+        service
+            .getGenres()
+            .then(data => this.setState({genres: data}))
     }
 
     rateMovie = (id, rating) => {
         if (rating > 0) { 
-            service.rateMovie(id, rating)
-                                    .then(() => service.getRatedMovies())
+            service
+                .rateMovie(id, rating)
+                .then(() => service.getRatedMovies())
         }
         if (rating === 0) {
             const updatedRatedMovies = this.state.ratedMovies.filter(el => el.id !== id)
