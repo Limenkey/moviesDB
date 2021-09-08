@@ -93,10 +93,17 @@ export default class MyCard extends Component {
                 </div>
                 <p className="card__synopsis">{this.shortenSynopsis(synopsis)}</p>
             </div>
-            <Rate className="card__stars" allowHalf count="10" defaultValue={this.isRated(ratings)} onChange={(num) => {
-                                                                                            rateMovie(num)
-                                                                                            this.checkRating(num)
-                                                                                            }}/>
+            <Rate 
+                className="card__stars" 
+                allowHalf count="10" 
+                defaultValue={this.isRated(ratings)} 
+                onChange={
+                    (num) => {
+                        rateMovie(num)
+                        this.checkRating(num)
+                        }
+                    }
+            />
         </div>
     </Card>)
    }

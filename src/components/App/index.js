@@ -168,31 +168,37 @@ export default class App extends Component {
    render() {
        const {query, movies, pages, loading, error, errorMessage, page, ratedMovies, switcher, ratedPages, searched} = this.state
        const rated = 'Rated'
-       const input = switcher !== rated && <Input className="search-input" 
-                                                    placeholder="Type to search..." 
-                                                    onChange={e => this.setState({query: e.target.value})}
-                                                    value={query}
-                                                />
+       const input = switcher !== rated && <Input 
+                                                className="search-input" 
+                                                placeholder="Type to search..." 
+                                                onChange={e => this.setState({query: e.target.value})}
+                                                value={query}
+                                            />
     return (
             <DataProvider value={this.state.genres}>
-                <Navigation className="navigation" onSwitch={(str) => this.onSwitch(str)}/>
+                <Navigation 
+                    className="navigation" 
+                    onSwitch={(str) => this.onSwitch(str)}
+                />
                 {input}
-                <PageContent className="pagecontent" query={query}
-                                                     movies={movies}
-                                                     pages={pages}
-                                                     loading={loading}
-                                                     error={error}
-                                                     errMsg={errorMessage}
-                                                     onPageChange={(num) => {
-                                                        this.search(query)
-                                                        this.updateMovies(num, query)
-                                                     }}
-                                                     page={page}
-                                                     rateMovie={(id, num) => this.rateMovie(id, num)}
-                                                     ratings={ratedMovies}
-                                                     switcher={switcher}
-                                                     ratedPages={ratedPages}
-                                                     searched={searched}
+                <PageContent
+                    className="pagecontent" 
+                    query={query}
+                    movies={movies}
+                    pages={pages}
+                    loading={loading}
+                    error={error}
+                    errMsg={errorMessage}
+                    onPageChange={(num) => {
+                    this.search(query)
+                    this.updateMovies(num, query)
+                    }}
+                    page={page}
+                    rateMovie={(id, num) => this.rateMovie(id, num)}
+                    ratings={ratedMovies}
+                    switcher={switcher}
+                    ratedPages={ratedPages}
+                    searched={searched}
                 />
             </DataProvider>
         )
